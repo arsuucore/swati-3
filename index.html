@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<title>For Swati 🐱🤿</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Quicksand:wght@500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FFF6EC;
+    --rose:#FF6F91;
+    --rose-dark:#E8536F;
+    --peach:#FFD3B6;
+    --yellow:#FFD66B;
+    --plum:#4A3947;
+    --mint:#8FD9B6;
+    --white:#FFFFFF;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html,body{
+    margin:0; padding:0; min-height:100%;
+    font-family:'Quicksand', sans-serif;
+    color:var(--plum);
+    background:var(--cream);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow-x:hidden;
+    position:relative;
+  }
+
+  /* ---------- ambient background blobs ---------- */
+  .blob{
+    position:fixed;
+    border-radius:50%;
+    filter:blur(50px);
+    opacity:0.5;
+    z-index:0;
+    animation: drift 18s ease-in-out infinite;
+  }
+  .blob.b1{ width:280px; height:280px; background:var(--peach); top:-60px; left:-60px; }
+  .blob.b2{ width:240px; height:240px; background:var(--rose); bottom:-80px; right:-60px; animation-delay:3s; }
+  .blob.b3{ width:200px; height:200px; background:var(--yellow); bottom:30%; left:-80px; animation-delay:6s; }
+  @keyframes drift{
+    0%,100%{ transform: translate(0,0) scale(1); }
+    50%{ transform: translate(30px,-20px) scale(1.1); }
+  }
+
+  /* ---------- shared layout ---------- */
+  .app{
+    position:relative;
+    z-index:1;
+    width:100%;
+    max-width:430px;
+    min-height:100vh;
+    padding:28px 20px 40px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+  }
+
+  .screen{ display:none; width:100%; flex-direction:column; align-items:center; }
+  .screen.active{ display:flex; }
+
+  h1,h2,h3{ font-family:'Fredoka', sans-serif; margin:0; }
+  h1{ font-size:1.9rem; color:var(--rose-dark); }
+  h2{ font-size:1.35rem; color:var(--plum); line-height:1.35; }
+
+  .note{ font-family:'Caveat', cursive; font-size:1.35rem; color:var(--rose-dark); }
+
+  .btn{
+    font-family:'Fredoka', sans-serif;
+    font-size:1.05rem;
+    font-weight:600;
+    color:var(--white);
+    background:var(--rose);
+    border:none;
+    border-radius:999px;
+    padding:14px 34px;
+    cursor:pointer;
+    box-shadow:0 6px 0 var(--rose-dark);
+    transition: transform .08s ease, box-shadow .08s ease;
+  }
+  .btn:active{ transform: translateY(4px); box-shadow:0 2px 0 var(--rose-dark); }
+  .btn.secondary{
+    background:var(--white);
+    color:var(--rose-dark);
+    box-shadow:0 6px 0 #E8DCD2;
+  }
+  .btn.secondary:active{ box-shadow:0 2px 0 #E8DCD2; }
+  .btn:focus-visible{ outline:3px solid var(--plum); outline-offset:3px; }
+
+  /* ---------- mascot (scuba cat) ---------- */
+  .mascot{ width:120px; height:120px; margin: 6px auto 10px; animation: bob 3s ease-in-out infinite; }
+  .mascot.shake{ animation: shake .5s ease; }
+  .mascot.win{ animation: bounce-big .7s ease; }
+  .mascot.dance{ animation: dance .6s ease-in-out 2; }
+  @keyframes bob{ 0%,100%{ transform: translateY(0) rotate(-2deg); } 50%{ transform: translateY(-10px) rotate(2deg); } }
+  @keyframes shake{ 0%,100%{ transform: translateX(0); } 20%{ transform: translateX(-10px) rotate(-4deg); } 40%{ transform: translateX(10px) rotate(4deg); } 60%{ transform: translateX(-8px) rotate(-3deg); } 80%{ transform: translateX(8px) rotate(3deg); } }
+  @keyframes bounce-big{ 0%{ transform: scale(1); } 40%{ transform: scale(1.25) rotate(8deg); } 70%{ transform: scale(0.95) rotate(-6deg); } 100%{ transform: scale(1) rotate(0); } }
+  @keyframes dance{
+    0%,100%{ transform: translateY(0) rotate(-10deg) scale(1); }
+    25%{ transform: translateY(-18px) rotate(10deg) scale(1.08); }
+    50%{ transform: translateY(0) rotate(-10deg) scale(1); }
+    75%{ transform: translateY(-12px) rotate(10deg) scale(1.05); }
+  }
+
+  /* ---------- intro screen ---------- */
+  .dancing-cat{
+    font-size: 5rem;
+    margin-bottom: 6px;
+    animation: dance 1s ease-in-out infinite;
+    display:inline-block;
+  }
+  .intro-text{
+    font-size: 1rem; line-height: 1.6; max-width: 340px;
+    margin: 14px auto 24px; color: var(--plum);
+  }
+
+  /* ---------- loading screen ---------- */
+  .photo-cycle{
+    width:220px; height:220px; border-radius:24px;
+    background:var(--white);
+    box-shadow:0 10px 30px rgba(74,57,71,.15);
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden; margin: 18px 0 14px; position:relative;
+  }
+  .photo-cycle img{ width:100%; height:100%; object-fit:cover; display:block; opacity:0; transition:opacity .6s ease; position:absolute; inset:0; }
+  .photo-cycle img.show{ opacity:1; }
+  .photo-cycle .placeholder{
+    font-size:4rem; color:var(--peach);
+  }
+  .loading-text{ font-family:'Caveat', cursive; font-size:1.5rem; color:var(--rose-dark); min-height: 1.6em; }
+  .dots::after{ content:''; animation: dots 1.4s steps(4,end) infinite; }
+  @keyframes dots{ 0%{content:'';} 25%{content:'.';} 50%{content:'..';} 75%{content:'...';} 100%{content:'';} }
+
+  /* ---------- music controls ---------- */
+  .music-toggle{
+    position:fixed; top:14px; right:14px; z-index:5;
+    background:var(--white); border:none; border-radius:999px;
+    width:46px; height:46px; font-size:1.3rem; cursor:pointer;
+    box-shadow:0 4px 12px rgba(74,57,71,.15);
+  }
+
+  /* ---------- quiz screen ---------- */
+  .progress{ display:flex; gap:6px; margin-bottom:18px; }
+  .progress span{ font-size:1.3rem; opacity:.25; transition:opacity .3s, transform .3s; }
+  .progress span.done{ opacity:1; transform:scale(1.15); }
+
+  .card{
+    background:var(--white);
+    border-radius:22px;
+    padding:24px 20px;
+    width:100%;
+    box-shadow:0 12px 28px rgba(74,57,71,.12);
+    margin-bottom:18px;
+  }
+
+  .options{ display:flex; flex-direction:column; gap:12px; margin-top:18px; }
+  .option{
+    font-family:'Quicksand', sans-serif;
+    font-weight:600;
+    font-size:1rem;
+    background:var(--cream);
+    border:2px solid #F4E3D7;
+    border-radius:14px;
+    padding:13px 16px;
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:space-between;
+    gap:10px;
+    transition: transform .08s ease, background .2s ease, border-color .2s ease;
+    color:var(--plum);
+    text-align:left;
+  }
+  .option:hover{ border-color:var(--rose); }
+  .option:active{ transform:scale(.98); }
+  .option.correct{ background:var(--mint); border-color:var(--mint); color:var(--plum); }
+  .option.wrong{ background:#FFD7D7; border-color:#FFB3B3; }
+  .option:focus-visible{ outline:3px solid var(--plum); outline-offset:2px; }
+
+  .play-btn{
+    background:var(--rose); color:var(--white);
+    border:none; border-radius:50%;
+    width:30px; height:30px; min-width:30px;
+    font-size:.85rem; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+
+  .runaway-row{ display:flex; gap:14px; justify-content:center; margin-top:18px; flex-wrap:wrap; position:relative; min-height:170px; align-content:flex-start; }
+  .runaway{ position:relative; transition: transform .2s ease; }
+
+  .feedback{
+    min-height:1.4em; font-family:'Caveat', cursive; font-size:1.25rem; color:var(--rose-dark); margin-top:6px;
+  }
+
+  /* ---------- photo reveal modal ---------- */
+  .overlay{
+    position:fixed; inset:0; background:rgba(74,57,71,.55);
+    display:none; align-items:center; justify-content:center; z-index:10; padding:20px;
+  }
+  .overlay.active{ display:flex; }
+  .polaroid{
+    background:var(--white); border-radius:14px; padding:14px 14px 22px;
+    box-shadow:0 16px 40px rgba(0,0,0,.25);
+    width:100%; max-width:300px;
+    transform: rotate(-2deg);
+    animation: pop-in .35s ease;
+  }
+  @keyframes pop-in{ from{ transform: scale(.7) rotate(-2deg); opacity:0; } to{ transform: scale(1) rotate(-2deg); opacity:1; } }
+  .polaroid .ph{
+    width:100%; aspect-ratio:1/1; border-radius:8px; overflow:hidden;
+    background: linear-gradient(135deg,var(--peach),var(--rose));
+    display:flex; align-items:center; justify-content:center; font-size:3rem; color:var(--white);
+    position:relative;
+  }
+  .polaroid .ph img{ width:100%; height:100%; object-fit:cover; }
+  .polaroid .cap{ font-family:'Caveat', cursive; font-size:1.3rem; color:var(--plum); margin-top:12px; text-align:center; }
+
+  /* ---------- minigame ---------- */
+  .game-area{
+    position:relative; width:100%; height:380px; background:var(--white);
+    border-radius:22px; overflow:hidden; box-shadow:0 12px 28px rgba(74,57,71,.12); margin-bottom:14px;
+  }
+  .heart{
+    position:absolute; font-size:2rem; cursor:pointer; user-select:none;
+    animation: fall linear forwards;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,.1));
+  }
+  @keyframes fall{ from{ transform: translateY(-40px) rotate(0deg); } to{ transform: translateY(420px) rotate(40deg); } }
+  .heart.fly{
+    animation: fly-away 1.4s ease-in forwards !important;
+  }
+  @keyframes fly-away{
+    0%{ transform: translate(0,0) rotate(0); opacity:1; }
+    100%{ transform: translate(420px,-160px) rotate(540deg); opacity:0; }
+  }
+  .game-hud{
+    position:absolute; top:10px; left:10px; right:10px;
+    display:flex; justify-content:space-between; font-family:'Fredoka',sans-serif; font-weight:600; color:var(--rose-dark);
+    z-index:2;
+  }
+  .wind-caption{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-family:'Caveat', cursive; font-size:2rem; color:var(--rose-dark);
+    opacity:0; pointer-events:none; transition: opacity .3s ease; text-align:center; padding:0 20px;
+  }
+  .wind-caption.show{ opacity:1; }
+
+  /* ---------- finale ---------- */
+  .polaroid-wall{
+    display:grid; grid-template-columns:repeat(2,1fr); gap:12px; width:100%; margin: 16px 0;
+  }
+  .polaroid-wall .item{
+    background:var(--white); border-radius:10px; padding:8px 8px 16px;
+    box-shadow:0 6px 16px rgba(74,57,71,.12);
+  }
+  .polaroid-wall .item:nth-child(odd){ transform: rotate(-3deg); }
+  .polaroid-wall .item:nth-child(even){ transform: rotate(3deg); }
+  .polaroid-wall .ph{
+    width:100%; aspect-ratio:1/1; border-radius:6px; overflow:hidden;
+    background: linear-gradient(135deg,var(--peach),var(--rose));
+    display:flex; align-items:center; justify-content:center; font-size:2rem; color:var(--white);
+  }
+  .polaroid-wall .ph img{ width:100%; height:100%; object-fit:cover; }
+
+  .coupon{
+    width:100%; border:3px dashed var(--rose); border-radius:16px; padding:18px;
+    background: var(--white); margin: 10px 0 18px;
+  }
+  .coupon-code{
+    font-family:'Fredoka', sans-serif; font-weight:700; font-size:1.4rem; letter-spacing:2px;
+    color:var(--rose-dark); margin: 8px 0;
+  }
+  .copied-msg{ font-family:'Caveat', cursive; color:var(--mint); font-size:1.1rem; min-height:1.4em; }
+
+  .score-line{ font-family:'Fredoka', sans-serif; font-size:1.1rem; color:var(--rose-dark); margin: 4px 0 2px; }
+
+  footer.credit{ margin-top: 14px; font-size: .75rem; opacity:.45; }
+</style>
+</head>
+<body>
+
+<div class="blob b1"></div>
+<div class="blob b2"></div>
+<div class="blob b3"></div>
+
+<!-- ===================== AUDIO ===================== -->
+<!-- Put your own audio files in the /audio folder with these exact names.
+     The page works fine without them (they just won't play). -->
+<audio id="audio-bg" loop src="audio/udi-udi.mp3"></audio>
+<audio id="audio-kesariya" src="audio/kesariya.mp3"></audio>
+<audio id="audio-apna-bana-le" src="audio/apna-bana-le.mp3"></audio>
+<audio id="audio-tum-hi-ho" src="audio/tum-hi-ho.mp3"></audio>
+<audio id="audio-me-gustas-tu" src="audio/me-gustas-tu.mp3"></audio>
+<audio id="audio-bairan" src="audio/bairan.mp3"></audio>
+<audio id="audio-wind" src="audio/must-be-the-wind.mp3"></audio>
+<audio id="audio-yumm" src="audio/yumm.mp3"></audio>
+<audio id="audio-pop" src="audio/pop.mp3"></audio>
+<audio id="audio-yay" src="audio/yay.mp3"></audio>
+<audio id="audio-wrong" src="audio/wrong.mp3"></audio>
+
+<button class="music-toggle" id="musicToggle" title="Play / pause music" aria-label="Toggle background music">🔇</button>
+
+<div class="app">
+
+  <!-- ===================== SCREEN 0: INTRO ===================== -->
+  <section class="screen active" id="screen-intro">
+    <div class="dancing-cat" id="dancingCat">🐱</div>
+    <h1>Hello cutey! 💕</h1>
+    <p class="intro-text">
+      <!-- EDIT ME: write your own little paragraph to her here -->
+      Hii Swati! Before anything else... I just wanted to say I'm so happy we found our way back to each other.
+      I made this little game just for you, full of our memories, our songs, and a few silly inside jokes 🐱🤿.
+      Answer everything right and there's a sweet treat waiting at the end. Ready? Hit play and let's go!
+    </p>
+    <button class="btn" id="introPlayBtn">Play ▶️</button>
+  </section>
+
+  <!-- ===================== SCREEN 1: LOADING ===================== -->
+  <section class="screen" id="screen-loading">
+    <h1>For Swati 🐱🤿</h1>
+    <div class="photo-cycle" id="photoCycle">
+      <div class="placeholder">🐱</div>
+    </div>
+    <p class="loading-text">loading your favourite person<span class="dots"></span></p>
+    <button class="btn" id="startBtn" style="margin-top:22px; visibility:hidden;">Start ✨</button>
+  </section>
+
+  <!-- ===================== SCREEN 2: QUIZ ===================== -->
+  <section class="screen" id="screen-quiz">
+    <div class="progress" id="progress"></div>
+    <div class="mascot" id="quizMascot">🐱🤿</div>
+    <div class="card">
+      <h2 id="questionText"></h2>
+      <div class="options" id="optionsBox"></div>
+      <div class="feedback" id="feedback"></div>
+    </div>
+  </section>
+
+  <!-- ===================== SCREEN 3: MINIGAME ===================== -->
+  <section class="screen" id="screen-game">
+    <h2 style="margin-bottom:6px;">catch 5 hearts 🫀</h2>
+    <p class="note" style="margin-bottom:10px;">tap them before they fall!</p>
+    <div class="game-area" id="gameArea">
+      <div class="game-hud">
+        <span id="gameScore">caught: 0 / 5</span>
+        <span>🐱🤿</span>
+      </div>
+      <div class="wind-caption" id="windCaption">must be the wind 💨</div>
+    </div>
+    <button class="btn" id="gameContinueBtn" style="display:none;">Continue the quiz →</button>
+  </section>
+
+  <!-- ===================== SCREEN 4: FINALE ===================== -->
+  <section class="screen" id="screen-finale">
+    <div class="mascot win" id="finaleMascot">🐱🤿💕</div>
+    <h1>you did it!</h1>
+    <p class="score-line" id="scoreLine"></p>
+
+    <div class="polaroid-wall" id="polaroidWall"></div>
+
+    <div class="coupon">
+      <div class="note">redeem this for...</div>
+      <h2>one (1) ice cream treat 🍦</h2>
+      <div class="coupon-code" id="couponCode">SCUBA-CAT-ICECREAM</div>
+      <button class="btn secondary" id="copyBtn">Copy code 📋</button>
+      <div class="copied-msg" id="copiedMsg"></div>
+    </div>
+
+    <p class="note">— from your scuba cat, always 🐱🤿💕</p>
+  </section>
+
+  <footer class="credit">made with love, for you 💌</footer>
+</div>
+
+<!-- ===================== PHOTO REVEAL MODAL ===================== -->
+<div class="overlay" id="revealOverlay">
+  <div class="polaroid">
+    <div class="ph" id="revealPhoto">📷</div>
+    <div class="cap" id="revealCaption"></div>
+    <div style="text-align:center; margin-top:14px;">
+      <button class="btn" id="revealContinueBtn">Continue →</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+<script>
+/* =========================================================================
+   EDIT ME: photos, captions, questions, coupon code
+   ------------------------------------------------------------------------
+   - Put 6 photos in /photos named 1.jpg ... 6.jpg (or change the paths below).
+   - Put audio files in /audio with the filenames referenced in the <audio>
+     tags above (mp3 works everywhere). The page works without them.
+   - Everything below is plain data, no coding needed to tweak the content.
+   ========================================================================= */
+
+const PHOTOS = ['photos/1.jpg','photos/2.jpg','photos/3.jpg','photos/4.jpg','photos/5.jpg','photos/6.jpg'];
+
+const COUPON_CODE = 'SCUBA-CAT-ICECREAM';
+
+const questions = [
+  {
+    q: "When did I first confess my feelings to you?",
+    options: ["11 Feb, 4:56", "14 Feb, 6:00", "1 April, 12:00", "10 Feb, 3:00"],
+    answer: "11 Feb, 4:56",
+    photo: PHOTOS[0],
+    caption: "the moment that changed everything... 11.02, 4:56am 💕"
+  },
+  {
+    q: "What song reminds you of us?",
+    options: ["Kesariya", "Apna Bana Le", "Bairan", "Me Gustas Tu"],
+    answer: "Bairan",
+    songButtons: { "Kesariya":"audio-kesariya", "Apna Bana Le":"audio-apna-bana-le", "Bairan":"audio-bairan", "Me Gustas Tu":"audio-me-gustas-tu" },
+    photo: PHOTOS[1],
+    caption: "our song says it all 🎶"
+  },
+  {
+    q: "If Adarsh were a snack, what would he be?",
+    options: ["Bhelpuri", "Pizza", "Maggi", "Samosa"],
+    answer: "Bhelpuri",
+    photo: PHOTOS[2],
+    caption: "spicy, a little messy, but you always come back for more 😋"
+  },
+  {
+    q: "One word that describes us?",
+    options: ["Scuba Cat", "Chaotic", "Cute", "Weird"],
+    answer: "Scuba Cat",
+    photo: PHOTOS[3],
+    caption: "us, exploring everything together 🐱🤿"
+  },
+  {
+    q: "What's our song?",
+    options: ["Me Gustas Tu", "Kesariya", "Tum Hi Ho", "Apna Bana Le"],
+    answer: "Me Gustas Tu",
+    songButtons: { "Kesariya":"audio-kesariya", "Apna Bana Le":"audio-apna-bana-le", "Tum Hi Ho":"audio-tum-hi-ho", "Me Gustas Tu":"audio-me-gustas-tu" },
+    photo: PHOTOS[4],
+    caption: "te quiero, te quiero, te quiero 🎵"
+  },
+  {
+    q: "Will Adarsh ever leave you?",
+    options: ["YES", "NO"],
+    answer: "NO",
+    special: "runaway",
+    photo: PHOTOS[5],
+    caption: "never. not now, not ever. 💍"
+  }
+];
+
+const MINIGAME_AFTER_QUESTION = 3; // 1-indexed: show minigame after this question is answered correctly
+
+/* ========================================================================= */
+
+let current = 0;
+let score = 0;
+
+const screens = {
+  intro: document.getElementById('screen-intro'),
+  loading: document.getElementById('screen-loading'),
+  quiz: document.getElementById('screen-quiz'),
+  game: document.getElementById('screen-game'),
+  finale: document.getElementById('screen-finale')
+};
+
+function showScreen(name){
+  Object.values(screens).forEach(s => s.classList.remove('active'));
+  screens[name].classList.add('active');
+}
+
+/* ---------------- INTRO SCREEN ---------------- */
+const introPlayBtn = document.getElementById('introPlayBtn');
+const dancingCat = document.getElementById('dancingCat');
+
+introPlayBtn.addEventListener('click', () => {
+  playSfx('audio-yay');
+  dancingCat.style.animation = 'none';
+  // restart the dance animation for a little extra "yay" burst
+  requestAnimationFrame(() => { dancingCat.style.animation = 'dance .5s ease-in-out 3'; });
+  setTimeout(() => showScreen('loading'), 400);
+});
+
+
+/* ---------------- image helper: shows photo if it exists, else a placeholder ---------------- */
+function loadPhotoInto(container, src, placeholderEmoji){
+  container.innerHTML = '';
+  const img = new Image();
+  img.onload = () => { container.innerHTML = ''; container.appendChild(img); img.classList.add('show'); };
+  img.onerror = () => { container.textContent = placeholderEmoji; };
+  img.src = src;
+  img.alt = '';
+}
+
+/* ---------------- LOADING SCREEN ---------------- */
+const photoCycle = document.getElementById('photoCycle');
+let cycleIndex = 0;
+function cyclePhoto(){
+  loadPhotoInto(photoCycle, PHOTOS[cycleIndex % PHOTOS.length], '🐱');
+  cycleIndex++;
+}
+cyclePhoto();
+const cycleTimer = setInterval(cyclePhoto, 1100);
+
+const startBtn = document.getElementById('startBtn');
+setTimeout(() => { startBtn.style.visibility = 'visible'; }, 3300);
+
+startBtn.addEventListener('click', () => {
+  clearInterval(cycleTimer);
+  showScreen('quiz');
+  renderQuestion();
+  tryStartMusic();
+});
+
+/* ---------------- BACKGROUND MUSIC ---------------- */
+const bgMusic = document.getElementById('audio-bg');
+const musicToggle = document.getElementById('musicToggle');
+let musicOn = false;
+
+function tryStartMusic(){
+  bgMusic.volume = 0.45;
+  bgMusic.play().then(() => { musicOn = true; musicToggle.textContent = '🔊'; }).catch(() => {
+    musicOn = false; musicToggle.textContent = '🔇';
+  });
+}
+
+musicToggle.addEventListener('click', () => {
+  if (musicOn){ bgMusic.pause(); musicOn = false; musicToggle.textContent = '🔇'; }
+  else { bgMusic.play(); musicOn = true; musicToggle.textContent = '🔊'; }
+});
+
+/* ---------------- QUIZ ---------------- */
+const progressEl = document.getElementById('progress');
+const questionText = document.getElementById('questionText');
+const optionsBox = document.getElementById('optionsBox');
+const feedback = document.getElementById('feedback');
+const quizMascot = document.getElementById('quizMascot');
+
+function renderProgress(){
+  progressEl.innerHTML = '';
+  for (let i = 0; i < questions.length; i++){
+    const span = document.createElement('span');
+    span.textContent = '🤍';
+    if (i < current) { span.textContent = '💗'; span.classList.add('done'); }
+    progressEl.appendChild(span);
+  }
+}
+
+function renderQuestion(){
+  feedback.textContent = '';
+  quizMascot.className = 'mascot';
+  renderProgress();
+  const item = questions[current];
+  questionText.textContent = item.q;
+  optionsBox.innerHTML = '';
+
+  if (item.special === 'runaway'){
+    optionsBox.classList.add('runaway-row');
+    item.options.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'option';
+      btn.style.flex = '1';
+      btn.style.justifyContent = 'center';
+      btn.textContent = opt === 'YES' ? '😨 YES' : '🥰 NO';
+      if (opt === 'YES'){
+        btn.classList.add('runaway');
+        setupRunaway(btn, optionsBox);
+      }
+      btn.addEventListener('click', () => selectOption(opt, btn));
+      optionsBox.appendChild(btn);
+    });
+  } else {
+    optionsBox.classList.remove('runaway-row');
+    item.options.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'option';
+
+      const label = document.createElement('span');
+      label.textContent = opt;
+      btn.appendChild(label);
+
+      if (item.songButtons && item.songButtons[opt]){
+        const playBtn = document.createElement('button');
+        playBtn.className = 'play-btn';
+        playBtn.textContent = '▶';
+        playBtn.setAttribute('aria-label', 'Preview ' + opt);
+        playBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          playPreview(item.songButtons[opt], playBtn);
+        });
+        btn.appendChild(playBtn);
+      }
+
+      btn.addEventListener('click', () => selectOption(opt, btn));
+      optionsBox.appendChild(btn);
+    });
+  }
+}
+
+let currentPreview = null;
+function playPreview(audioId, btn){
+  const el = document.getElementById(audioId);
+  if (!el) return;
+  if (currentPreview && currentPreview !== el){ currentPreview.pause(); currentPreview.currentTime = 0; }
+  if (el.paused){ el.currentTime = 0; el.play().catch(()=>{}); btn.textContent = '❚❚'; currentPreview = el; }
+  else { el.pause(); btn.textContent = '▶'; }
+  el.onended = () => { btn.textContent = '▶'; };
+}
+
+function setupRunaway(btn, container){
+  function maybeRun(clientX, clientY){
+    const rect = btn.getBoundingClientRect();
+    const cx = rect.left + rect.width/2;
+    const cy = rect.top + rect.height/2;
+    const dist = Math.hypot(clientX - cx, clientY - cy);
+    if (dist < 90){
+      const cRect = container.getBoundingClientRect();
+      const maxX = Math.max(0, cRect.width - btn.offsetWidth);
+      const maxY = Math.max(0, cRect.height - btn.offsetHeight);
+      btn.style.position = 'absolute';
+      btn.style.left = (Math.random() * maxX) + 'px';
+      btn.style.top = (Math.random() * maxY) + 'px';
+    }
+  }
+  container.addEventListener('mousemove', (e) => maybeRun(e.clientX, e.clientY));
+  container.addEventListener('touchstart', (e) => {
+    const t = e.touches[0];
+    maybeRun(t.clientX, t.clientY);
+  }, { passive:true });
+}
+
+function selectOption(opt, btn){
+  const item = questions[current];
+  if (opt === item.answer){
+    btn.classList.add('correct');
+    quizMascot.classList.add('dance');
+    feedback.textContent = pickRandom([
+      "yesss! you know us so well 💕",
+      "correct! obviously 😌💗",
+      "yep, that's us 🥹"
+    ]);
+    score++;
+    playSfx('audio-pop');
+    confettiBurst();
+    setTimeout(() => revealPhoto(item), 700);
+  } else {
+    btn.classList.add('wrong');
+    quizMascot.classList.add('shake');
+    playSfx('audio-wrong');
+    feedback.textContent = pickRandom([
+      "hehe nope, try again 🥲",
+      "not quite... think harder 🤔",
+      "wrong answer, scuba cat is sad 🐱💧"
+    ]);
+    setTimeout(() => {
+      btn.classList.remove('wrong');
+      quizMascot.classList.remove('shake');
+    }, 500);
+  }
+}
+
+function pickRandom(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+/* ---------------- PHOTO REVEAL ---------------- */
+const revealOverlay = document.getElementById('revealOverlay');
+const revealPhotoEl = document.getElementById('revealPhoto');
+const revealCaptionEl = document.getElementById('revealCaption');
+const revealContinueBtn = document.getElementById('revealContinueBtn');
+
+function revealPhoto(item){
+  loadPhotoInto(revealPhotoEl, item.photo, '📷');
+  revealCaptionEl.textContent = item.caption;
+  revealOverlay.classList.add('active');
+}
+
+revealContinueBtn.addEventListener('click', () => {
+  revealOverlay.classList.remove('active');
+  current++;
+  if (current >= questions.length){
+    showFinale();
+    return;
+  }
+  if (current === MINIGAME_AFTER_QUESTION){
+    showScreen('game');
+    startMinigame();
+  } else {
+    renderQuestion();
+  }
+});
+
+/* ---------------- CONFETTI ---------------- */
+function confettiBurst(){
+  if (typeof confetti !== 'function') return;
+  confetti({
+    particleCount: 70,
+    spread: 65,
+    origin: { y: 0.6 },
+    colors: ['#FF6F91','#FFD66B','#FFD3B6','#8FD9B6']
+  });
+}
+
+function playSfx(id){
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.currentTime = 0;
+  el.play().catch(()=>{});
+}
+
+/* ---------------- MINIGAME ---------------- */
+const gameArea = document.getElementById('gameArea');
+const gameScoreEl = document.getElementById('gameScore');
+const gameContinueBtn = document.getElementById('gameContinueBtn');
+const windCaption = document.getElementById('windCaption');
+
+let caught = 0;
+let spawnTimer = null;
+let gameDone = false;
+
+function startMinigame(){
+  caught = 0;
+  gameDone = false;
+  gameScoreEl.textContent = 'caught: 0 / 5';
+  gameContinueBtn.style.display = 'none';
+  windCaption.classList.remove('show');
+  // clear any leftover hearts
+  gameArea.querySelectorAll('.heart').forEach(h => h.remove());
+  spawnTimer = setInterval(spawnHeart, 850);
+}
+
+function spawnHeart(){
+  if (gameDone) return;
+  const heart = document.createElement('div');
+  heart.className = 'heart';
+  heart.textContent = '🫀';
+  const areaWidth = gameArea.clientWidth;
+  heart.style.left = (Math.random() * (areaWidth - 40)) + 'px';
+  heart.style.top = '-40px';
+  const duration = 2.6 + Math.random() * 1.4;
+  heart.style.animationDuration = duration + 's';
+
+  heart.addEventListener('animationend', () => heart.remove());
+  heart.addEventListener('click', () => catchHeart(heart));
+  heart.addEventListener('touchstart', (e) => { e.preventDefault(); catchHeart(heart); }, { passive:false });
+
+  gameArea.appendChild(heart);
+}
+
+function catchHeart(heart){
+  if (gameDone) return;
+  if (caught >= 5){
+    // this is the 6th heart — it flies away
+    gameDone = true;
+    clearInterval(spawnTimer);
+    gameArea.querySelectorAll('.heart').forEach(h => { if (h !== heart) h.remove(); });
+    heart.classList.add('fly');
+    playSfx('audio-wind');
+    windCaption.classList.add('show');
+    setTimeout(() => {
+      heart.remove();
+      gameContinueBtn.style.display = 'inline-block';
+    }, 1400);
+    return;
+  }
+  caught++;
+  playSfx('audio-pop');
+  gameScoreEl.textContent = `caught: ${caught} / 5`;
+  heart.remove();
+  confettiMini();
+
+  if (caught === 5){
+    clearInterval(spawnTimer);
+    // spawn the 6th heart, slower, right in the middle so it's easy to tap
+    setTimeout(() => {
+      const sixth = document.createElement('div');
+      sixth.className = 'heart';
+      sixth.textContent = '🫀';
+      sixth.style.left = (gameArea.clientWidth/2 - 20) + 'px';
+      sixth.style.top = '40%';
+      sixth.style.animationDuration = '6s';
+      sixth.addEventListener('click', () => catchHeart(sixth));
+      sixth.addEventListener('touchstart', (e) => { e.preventDefault(); catchHeart(sixth); }, { passive:false });
+      gameArea.appendChild(sixth);
+    }, 600);
+  }
+}
+
+function confettiMini(){
+  if (typeof confetti !== 'function') return;
+  confetti({ particleCount: 18, spread: 40, startVelocity: 18, origin: { y: 0.5 }, colors: ['#FF6F91','#FFD66B'] });
+}
+
+gameContinueBtn.addEventListener('click', () => {
+  showScreen('quiz');
+  renderQuestion();
+});
+
+/* ---------------- FINALE ---------------- */
+const scoreLine = document.getElementById('scoreLine');
+const polaroidWall = document.getElementById('polaroidWall');
+const couponCodeEl = document.getElementById('couponCode');
+const copyBtn = document.getElementById('copyBtn');
+const copiedMsg = document.getElementById('copiedMsg');
+
+function showFinale(){
+  showScreen('finale');
+  scoreLine.textContent = `you scored ${score} / ${questions.length} 💗`;
+  couponCodeEl.textContent = COUPON_CODE;
+
+  polaroidWall.innerHTML = '';
+  PHOTOS.forEach((src) => {
+    const item = document.createElement('div');
+    item.className = 'item';
+    const ph = document.createElement('div');
+    ph.className = 'ph';
+    loadPhotoInto(ph, src, '🐱');
+    item.appendChild(ph);
+    polaroidWall.appendChild(item);
+  });
+
+  confettiBurst();
+  setTimeout(confettiBurst, 400);
+}
+
+copyBtn.addEventListener('click', async () => {
+  try{
+    await navigator.clipboard.writeText(COUPON_CODE);
+    copiedMsg.textContent = 'copied! send it to Adarsh 🍦';
+    playSfx('audio-yumm');
+  } catch(e){
+    copiedMsg.textContent = COUPON_CODE;
+  }
+});
+</script>
+</body>
+</html>
